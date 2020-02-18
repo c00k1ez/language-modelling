@@ -27,7 +27,7 @@ class ClassicLMFramework(pl.LightningModule):
     def forward(self, batch):
         return self.model(batch)
 
-    def training_step(self, batch):
+    def training_step(self, batch, batch_nb):
         x, y = batch['text'], batch['lm_label']
         loss_mask = batch['loss_mask']
         y_hat = self.model(x)
