@@ -11,6 +11,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 import os
 import confuse
 
+import nltk
 
 class ClassicLMFramework(pl.LightningModule):
 
@@ -80,6 +81,8 @@ class ClassicLMFramework(pl.LightningModule):
 
 
 if __name__ == "__main__":
+
+    nltk.download('punkt')
 
     config = confuse.Configuration('research')
     config.set_file('./configs/lm_base_config.yaml')
