@@ -29,14 +29,15 @@ def load_dataloaders(train_batch_size, test_batch_size, pad_len, vocab_file='./d
 
 def generate_sentence(md, tok, start_str):
     md.eval()
-    tokenized = tok.tokenize(start_str)
-    tokenized_ = tok.encode(tokenized)
-    gen = torch.exp(md(torch.LongTensor([tokenized_])))
-    gen = torch.argmax(gen).item()
-    while tok.decode([gen])[0] != '<eos>' and len(tokenized_) < 30:
-        tokenized_.append(gen)
+    with torch.no_grad():
+        tokenized = tok.tokenize(start_str)
+        tokenized_ = tok.encode(tokenized)
         gen = torch.exp(md(torch.LongTensor([tokenized_])))
-        gen = gen[0][-1].argmax().item()
+        gen = torch.argmax(gen[0][-1]).item()
+        while tok.decode([gen])[0] != '<eos>':
+            tokenized_.append(gen)
+            gen = torch.exp(md(torch.LongTensor([tokenized_])))
+            gen = gen[0][-1].argmax().item()
     print(' '.join(tok.decode(tokenized_)))
 
 def seed_all(seed):

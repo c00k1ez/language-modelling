@@ -3,7 +3,7 @@ from nltk.tokenize import MWETokenizer
 from collections import Counter
 import tqdm
 
-
+from typing import List
 
 class WordTokenizer:
     
@@ -28,13 +28,13 @@ class WordTokenizer:
                                             ('<', 'unk', '>'),
                                             ('<', 'pad', '>')], separator='')
 
-    def _write_vocab(self, file_name):
+    def _write_vocab(self, file_name: str) -> None:
         write_file = open(file_name, 'w', encoding='utf-8')
         for num, word in enumerate(self.vocab):
             write_file.write('{}\t{}\n'.format(num, word))
         write_file.close()
 
-    def _read_vocab(self):
+    def _read_vocab(self) -> None:
         if self.vocab_file is None:
             print('Cannot read vocab from file. You have to build it')
         else:
@@ -47,7 +47,7 @@ class WordTokenizer:
                     self.vocab.append(d[1])
             print('Read vocab file with {} tokens'.format(len(self.vocab)))
   
-    def build_vocab(self, raw_text, vocab_path='vocab.txt', threshold=0.7):
+    def build_vocab(self, raw_text: List[str], vocab_path='vocab.txt', threshold=0.7) -> None:
         vocab_ = []
         for sent in tqdm.tqdm(raw_text):
             tokenized = nltk.word_tokenize(sent)
@@ -73,50 +73,40 @@ class WordTokenizer:
         print('Build vocab with {} tokens'.format(len(self.vocab)))
         self._rev_vocab()
 
-    def _rev_vocab(self):
+    def _rev_vocab(self) -> None:
         if self.vocab is None:
             print('Cannot build reverse vocab without vocab')
         else:
             self.rev_vocab = {token: num for num, token in enumerate(self.vocab)}
 
-    def tokenize(self, raw_text):
+    def tokenize(self, raw_text: str) -> List[str]:
         if self.vocab is None:
             raise Exception('You cannot tokenize without vocab')
         else:
-            tok = nltk.word_tokenize(raw_text)
-            tok = self.mwe_tokenizer.tokenize(tok)
-            for i in range(len(tok)):
-                if tok[i] not in self.rev_vocab:
-                    tok[i] = self.unk_token
+            tokens = nltk.word_tokenize(raw_text)
+            tokens = self.mwe_tokenizer.tokenize(tokens)
+            for i in range(len(tokens)):
+                if tokens[i] not in self.rev_vocab:
+                    tokens[i] = self.unk_token
 
-            return tok
+            return tokens
       
-    def tokenize_batch(self, batch):
-        tokenized = []
-        for sent in batch:
-            tokenized.append(self.tokenize(sent))
+    def tokenize_batch(self, batch: List[str]) -> List[List[str]]:
+        tokenized = [self.tokenize(sent) for sent in batch]
         return tokenized
 
-    def encode(self,  tokenized_str):
-        encoded = []
-        for token in tokenized_str:
-            encoded.append(self.rev_vocab[token])
+    def encode(self,  tokenized_str: List[str]) -> List[int]:
+        encoded = [self.rev_vocab[token] for token in tokenized_str]
         return encoded
 
-    def encode_batch(self, tokenized_batch):
-        encoded_batch = []
-        for tok in tokenized_batch:
-            encoded_batch.append(self.encode(tok))
+    def encode_batch(self, tokenized_batch: List[List[str]]) -> List[List[int]]:
+        encoded_batch = [self.encode(tokens) for tokens in tokenized_batch]
         return encoded_batch
 
-    def decode(self, encoded_str):
-        decoded = []
-        for token in encoded_str:
-            decoded.append(self.vocab[token])
+    def decode(self, encoded_str: List[int]) -> List[str]:
+        decoded = [self.vocab[token] for token in encoded_str]
         return decoded
 
-    def decode_batch(self, encoded_batch):
-        decoded_batch = []
-        for tok in encoded_batch:
-            decoded_batch.append(self.decode(tok))
+    def decode_batch(self, encoded_batch: List[List[int]]) -> List[List[str]]:
+        decoded_batch = [self.decode(tokens) for tokens in encoded_batch]
         return decoded_batch
