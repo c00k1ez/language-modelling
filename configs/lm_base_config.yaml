@@ -1,0 +1,23 @@
+
+general:
+    seed: 42
+    checkpoint_path: ./classic_lm_checkpoints
+
+trainer_params:
+    max_epochs: 5
+    val_check_interval: 0.25
+    default_save_path: ./logs
+
+
+dataloaders:
+    train_batch_size: 30
+    test_batch_size: 20
+    pad_len: 300
+
+model:
+    vocab_size: 23315
+    embeddig_dim: 400 
+    hidden_size: 256
+
+optimizer:
+    learning_rate: 0.0005
