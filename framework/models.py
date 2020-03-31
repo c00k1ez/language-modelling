@@ -57,12 +57,10 @@ class AttentionLanguageModel(nn.Module):
 
         self.attention = nn.MultiheadAttention(hidden_size, n_heads)
 
-    def generate_square_subsequent_mask(self, seq_len):
-        mask = (torch.triu(torch.ones(seq_len, seq_len)) == 1).transpose(0, 1)
-        mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
-        return mask
 
     def forward(self, batch):
+        mask = batch[1]
+        batch = batch[0]
         emb = self.embedding(batch)
         emb = self.do(emb)
         lstm_output = self.do(self.lstm(emb)[0])
