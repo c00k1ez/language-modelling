@@ -69,7 +69,6 @@ class AttentionLanguageModel(nn.Module):
         pre_head = self.norm(pre_head)
 
         pre_head = pre_head.transpose(0, 1)
-        mask = self.generate_square_subsequent_mask(pre_head.shape[0])
         attn_output, _ = self.attention(pre_head, pre_head, pre_head, attn_mask=mask)
 
         return F.log_softmax(self.head(attn_output), dim=2)
