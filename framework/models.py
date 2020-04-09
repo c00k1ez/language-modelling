@@ -59,7 +59,8 @@ class AttentionLanguageModel(nn.Module):
 
 
     def forward(self, batch):
-        mask = batch[1]
+        pad_mask = batch[2]
+        attn_mask = batch[1]
         batch = batch[0]
         emb = self.embedding(batch)
         emb = self.do(emb)
@@ -67,9 +68,10 @@ class AttentionLanguageModel(nn.Module):
         gru_output = self.do(self.gru(lstm_output)[0])
         pre_head = lstm_output + gru_output
         pre_head = self.norm(pre_head)
-
+        pre_head = pre_head * pad_mask
+        
         pre_head = pre_head.transpose(0, 1)
-        attn_output, _ = self.attention(pre_head, pre_head, pre_head, attn_mask=mask)
+        attn_output, _ = self.attention(pre_head, pre_head, pre_head, attn_mask=attn_mask)
 
         return F.log_softmax(self.head(attn_output), dim=2)
 

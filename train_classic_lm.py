@@ -30,7 +30,7 @@ class ClassicLMFramework(pl.LightningModule):
     def training_step(self, batch, batch_nb):
         x, y = batch['text'], batch['lm_label']
         loss_mask = batch['loss_mask']
-        y_hat = self.model(x)
+        y_hat = self.forward(x)
         batch_size, seq_len, vocab = y_hat.shape[0], y_hat.shape[1], y_hat.shape[2]
         y_hat = y_hat.view(-1, vocab)
         y = y.view(batch_size * seq_len)
@@ -46,7 +46,7 @@ class ClassicLMFramework(pl.LightningModule):
     def validation_step(self, batch, batch_nb):
         x, y = batch['text'], batch['lm_label']
         loss_mask = batch['loss_mask']
-        y_hat = self.model(x)
+        y_hat = self.forward(x)
         batch_size, seq_len, vocab = y_hat.shape[0], y_hat.shape[1], y_hat.shape[2]
         y_hat = y_hat.view(-1, vocab)
         y = y.view(batch_size * seq_len)

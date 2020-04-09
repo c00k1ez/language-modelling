@@ -10,11 +10,11 @@ import numpy as np
 import random
 
 
-def load_dataloaders(train_batch_size, test_batch_size, pad_len, vocab_file='./data/vocab.txt'):
+def load_dataloaders(train_batch_size, test_batch_size, pad_len, vocab_file='./data/vocab.txt', tokenizer_class=WordTokenizer):
 
     parser = WikiTextParser('./data/wikitext-2')
 
-    tokenizer = WordTokenizer(vocab_file)
+    tokenizer = tokenizer_class(vocab_file)
 
     loaders = {
         'train': DataLoader(WikiTextDataset(parser.raw_sentencies['train'], pad_len, tokenizer), 
