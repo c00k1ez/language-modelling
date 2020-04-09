@@ -72,8 +72,8 @@ class AttentionLanguageModel(nn.Module):
             batch_first=True,
             enforce_sorted=False
         )
-        lstm_output = self.do(self.lstm(emb)[0])
-        gru_output = self.do(self.gru(lstm_output)[0])
+        lstm_output = self.lstm(emb)[0]
+        gru_output = self.gru(lstm_output)[0]
         lstm_output = torch.nn.utils.rnn.pad_packed_sequence(
             lstm_output, 
             batch_first=True, 
@@ -84,6 +84,9 @@ class AttentionLanguageModel(nn.Module):
             batch_first=True, 
             total_length=pad_len
         )[0]
+
+        lstm_output = self.do(lstm_output)
+        gru_output = self.do(gru_output)
 
         pre_head = lstm_output + gru_output
         pre_head = self.norm(pre_head)
