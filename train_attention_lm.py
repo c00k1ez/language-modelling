@@ -57,7 +57,7 @@ class AttentionLMFramework(pl.LightningModule):
         mask = mask.type_as(x)
 
         loss_mask = batch['loss_mask']
-        y_hat = self.forward((x, mask))
+        y_hat = self.forward((x, mask, loss_mask))
         
         batch_size, seq_len, vocab = y_hat.shape[0], y_hat.shape[1], y_hat.shape[2]
         y_hat = y_hat.view(-1, vocab)
