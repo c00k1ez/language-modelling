@@ -48,6 +48,7 @@ class AttentionLanguageModel(nn.Module):
 
     def __init__(self, vocab_size, embeddig_dim, hidden_size,  n_heads=8):
         super(AttentionLanguageModel, self).__init__()
+        self.hidden_size = hidden_size
         self.embedding = nn.Embedding(vocab_size, embeddig_dim)
         self.lstm = nn.LSTM(embeddig_dim, hidden_size, batch_first=True)
         self.do = SpatialDropout()
@@ -68,8 +69,10 @@ class AttentionLanguageModel(nn.Module):
         gru_output = self.do(self.gru(lstm_output)[0])
         pre_head = lstm_output + gru_output
         pre_head = self.norm(pre_head)
+
+        pad_mask = pad_mask.unsqueeze(2).repeat(1, 1, self.hidden_size)
         pre_head = pre_head * pad_mask
-        
+
         pre_head = pre_head.transpose(0, 1)
         attn_output, _ = self.attention(pre_head, pre_head, pre_head, attn_mask=attn_mask)
 
