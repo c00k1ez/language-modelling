@@ -34,10 +34,33 @@ class ClassicLanguageModel(nn.Module):
         self.head = nn.Linear(hidden_size, vocab_size)
 
     def forward(self, batch):
-        emb = self.embedding(batch)
+        x = batch['text']
+        pad_mask = batch['loss_mask']
+
+        emb = self.embedding(x)
         emb = self.do(emb)
-        lstm_output = self.do(self.lstm(emb)[0])
-        gru_output = self.do(self.gru(lstm_output)[0])
+        pad_len = emb.shape[1]
+        emb = torch.nn.utils.rnn.pack_padded_sequence(
+            emb, 
+            pad_mask.sum(dim=1),
+            batch_first=True,
+            enforce_sorted=False
+        )
+        lstm_output = self.lstm(emb)[0]
+        gru_output = self.gru(lstm_output)[0]
+        lstm_output = torch.nn.utils.rnn.pad_packed_sequence(
+            lstm_output, 
+            batch_first=True, 
+            total_length=pad_len
+        )[0]
+        gru_output = torch.nn.utils.rnn.pad_packed_sequence(
+            gru_output, 
+            batch_first=True, 
+            total_length=pad_len
+        )[0]
+
+        lstm_output = self.do(lstm_output)
+        gru_output = self.do(gru_output)
         pre_head = lstm_output + gru_output
         pre_head = self.norm(pre_head)
         return F.log_softmax(self.head(pre_head), dim=2)
@@ -58,12 +81,17 @@ class AttentionLanguageModel(nn.Module):
 
         self.attention = nn.MultiheadAttention(hidden_size, n_heads)
 
+    def generate_square_subsequent_mask(self, seq_len):
+        mask = (torch.triu(torch.ones(seq_len, seq_len)) == 1).transpose(0, 1)
+        mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
+        return mask
 
     def forward(self, batch):
-        pad_mask = batch[2]
-        attn_mask = batch[1]
-        batch = batch[0]
-        emb = self.embedding(batch)
+        pad_mask = batch['loss_mask']
+        x = batch['text']
+        attn_mask = self.generate_square_subsequent_mask(x.shape[1])
+        attn_mask = attn_mask.type_as(x)
+        emb = self.embedding(x)
         emb = self.do(emb)
         pad_len = emb.shape[1]
         emb = torch.nn.utils.rnn.pack_padded_sequence(
