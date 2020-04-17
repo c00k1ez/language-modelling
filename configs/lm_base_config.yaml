@@ -16,7 +16,7 @@ dataloaders:
     pad_len: 300
 
 model:
-    vocab_size: 23315
+    vocab_size: 23285
     embeddig_dim: 300 
     hidden_size: 128
 

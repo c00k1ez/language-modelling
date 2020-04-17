@@ -33,10 +33,10 @@ if __name__ == '__main__':
     loaders = load_dataloaders(**config['dataloaders'].get())
     framework = LMFramework(model, **config['optimizer'].get(), loaders=loaders)
     
-    if os.path.isdir(config['general']['checkpoint_path'].get()):
+    if not os.path.isdir(config['general']['checkpoint_path'].get()):
         os.makedirs(config['general']['checkpoint_path'].get())
     
-    if os.path.isdir(config['trainer_params']['default_save_path'].get()):
+    if not os.path.isdir(config['trainer_params']['default_save_path'].get()):
         os.makedirs(config['trainer_params']['default_save_path'].get())
 
     checkpoint_callback = ModelCheckpoint(
