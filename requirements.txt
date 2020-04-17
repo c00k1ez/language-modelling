@@ -3,3 +3,4 @@ torch>=1.3
 confuse
 tqdm>=4.35.0
 nltk
+youtokentome==1.0.6

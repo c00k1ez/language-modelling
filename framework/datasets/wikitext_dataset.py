@@ -8,10 +8,10 @@ class WikiTextDataset(data.Dataset):
                text,
                pad_len,
                tokenizer,
-               bos_token='<bos>', 
-               eos_token='<eos>',
-               unk_token='<unk>',
-               pad_token='<pad>'):
+               bos_token='<BOS>', 
+               eos_token='<EOS>',
+               unk_token='<UNK>',
+               pad_token='<PAD>'):
         self.text = text
         self.pad_len = pad_len
         self.tokenizer = tokenizer

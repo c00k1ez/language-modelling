@@ -9,10 +9,10 @@ class WordTokenizer:
     
     def __init__(self, 
                 vocab_file=None, 
-                bos_token='<bos>', 
-                eos_token='<eos>',
-                unk_token='<unk>',
-                pad_token='<pad>'):
+                bos_token='<BOS>', 
+                eos_token='<EOS>',
+                unk_token='<UNK>',
+                pad_token='<PAD>'):
     
         self.vocab = None
         self.rev_vocab = None
@@ -23,10 +23,10 @@ class WordTokenizer:
         self.eos_token = eos_token
         self.unk_token = unk_token
         self.pad_token = pad_token
-        self.mwe_tokenizer = MWETokenizer([ ('<', 'bos', '>'),
-                                            ('<', 'eos', '>'),
-                                            ('<', 'unk', '>'),
-                                            ('<', 'pad', '>')], separator='')
+        self.mwe_tokenizer = MWETokenizer([ ('<', 'BOS', '>'),
+                                            ('<', 'EOS', '>'),
+                                            ('<', 'UNK', '>'),
+                                            ('<', 'PAD', '>')], separator='')
 
     def _write_vocab(self, file_name: str) -> None:
         write_file = open(file_name, 'w', encoding='utf-8')
@@ -56,7 +56,9 @@ class WordTokenizer:
         cnt = Counter(vocab_)
         most_common_words = cnt.most_common(int(len(cnt) * threshold))
         most_common_words = [w[0] for w in most_common_words]
-        most_common_words.remove('<unk>')
+        most_common_words.remove('unk')
+        most_common_words.remove('<')
+        most_common_words.remove('>')
         vocab = []
         if self.bos_token is not None:
             vocab.append(self.bos_token)

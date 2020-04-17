@@ -13,19 +13,31 @@ import os
 import confuse
 
 import nltk
+import argparse
+
 
 if __name__ == '__main__':
 
     nltk.download('punkt')
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config_file', type=str, default='./configs/attention_lm_config.yaml')
+    args = parser.parse_args()
+
     config = confuse.Configuration('research')
-    config.set_file('./configs/lm_base_config.yaml')
+    config.set_file(args.config_file)
 
     seed_all(config['general']['seed'].get())
 
     model = AttentionLanguageModel(**config['model'].get())
     loaders = load_dataloaders(**config['dataloaders'].get())
     framework = LMFramework(model, **config['optimizer'].get(), loaders=loaders)
+    
+    if os.path.isdir(config['general']['checkpoint_path'].get()):
+        os.makedirs(config['general']['checkpoint_path'].get())
+    
+    if os.path.isdir(config['trainer_params']['default_save_path'].get()):
+        os.makedirs(config['trainer_params']['default_save_path'].get())
 
     checkpoint_callback = ModelCheckpoint(
         filepath=config['general']['checkpoint_path'].get(),

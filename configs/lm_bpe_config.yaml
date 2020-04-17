@@ -14,9 +14,11 @@ dataloaders:
     train_batch_size: 30
     test_batch_size: 20
     pad_len: 300
+    tokenizer_type: bpe
+    model_file: ./data/bpe_15000_vocab.model
 
 model:
-    vocab_size: 23315
+    vocab_size: 15000
     embeddig_dim: 300 
     hidden_size: 128
 

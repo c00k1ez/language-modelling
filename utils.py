@@ -5,16 +5,31 @@ from torch.utils.data import DataLoader
 from framework.datasets.wikitext_dataset import WikiTextDataset
 from framework.wikitext_parser import WikiTextParser
 from framework.word_tokenizer import WordTokenizer
+from framework.bpe_tokenizer import BPETokenizer
 
 import numpy as np
 import random
 
 
-def load_dataloaders(train_batch_size, test_batch_size, pad_len, vocab_file='./data/vocab.txt', tokenizer_class=WordTokenizer):
+def load_dataloaders(train_batch_size, 
+                    test_batch_size, 
+                    pad_len, 
+                    vocab_file='./data/vocab.txt', 
+                    tokenizer_type='word',
+                    model_file=None,
+                    dropout_prob=0.0):
+    
+    if tokenizer_type not in ['word', 'bpe']:
+        raise ValueError("You have to use only 'word' or 'bpe' tokenizer type")
+
+    if tokenizer_type == 'word':
+        tokenizer = WordTokenizer(vocab_file)
+    elif tokenizer_type == 'bpe':
+        if model_file is None:
+            raise ValueError("When you use 'bpe' tokenizer, you have to set path to BPE model")
+        tokenizer = BPETokenizer(model_file, dropout_prob=dropout_prob)
 
     parser = WikiTextParser('./data/wikitext-2')
-
-    tokenizer = tokenizer_class(vocab_file)
 
     loaders = {
         'train': DataLoader(WikiTextDataset(parser.raw_sentencies['train'], pad_len, tokenizer), 
@@ -34,7 +49,7 @@ def generate_sentence(md, tok, start_str):
         tokenized_ = tok.encode(tokenized)
         gen = torch.exp(md(torch.LongTensor([tokenized_])))
         gen = torch.argmax(gen[0][-1]).item()
-        while tok.decode([gen])[0] != '<eos>':
+        while tok.decode([gen])[0] != '<EOS>':
             tokenized_.append(gen)
             gen = torch.exp(md(torch.LongTensor([tokenized_])))
             gen = gen[0][-1].argmax().item()
