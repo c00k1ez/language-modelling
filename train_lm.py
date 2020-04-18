@@ -66,7 +66,11 @@ if __name__ == "__main__":
         experiment_name=exp_name
     )
 
-    logger.experiment.log_parameters(config.get())
+    config_data = {}
+    cfg_raw = config.get()
+    for key in cfg_raw.keys():
+        config_data.update(dict(cfg_raw[key]))
+    logger.experiment.log_parameters(config_data)
 
     checkpoint_callback = ModelCheckpoint(
         filepath=config['general']['checkpoint_path'].get(),
