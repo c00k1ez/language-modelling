@@ -32,9 +32,9 @@ if __name__ == "__main__":
 
     model = None
     if args.model == 'classic_lm':
-        model = ClassicLanguageModel(**config['model'].get())
+        model = ClassicLanguageModel(**config['model'].get(), model_name=args.model)
     elif args.model == 'attention_lm':
-        model = AttentionLanguageModel(**config['model'].get())
+        model = AttentionLanguageModel(**config['model'].get(), model_name=args.model)
     else:
         raise ValueError("You have wrong --model parameter")
 

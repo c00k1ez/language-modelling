@@ -76,5 +76,6 @@ class LMFramework(pl.LightningModule):
     
     def on_save_checkpoint(self, checkpoint):
         if isinstance(self.logger, pl.logging.CometLogger):
-            self.logger.experiment.log_model(checkpoint)
+            model_name = self.model.model_name
+            self.logger.experiment.log_model(model_name, checkpoint)
 

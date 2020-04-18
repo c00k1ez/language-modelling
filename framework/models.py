@@ -24,8 +24,9 @@ class SpatialDropout(torch.nn.Dropout2d):
 
 class ClassicLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size, embeddig_dim, hidden_size, weight_tying=True):
+    def __init__(self, vocab_size, embeddig_dim, hidden_size, weight_tying=True, model_name=None):
         super(ClassicLanguageModel, self).__init__()
+        self.model_name = model_name
         self.vocab_size = vocab_size
         self.embeddig_dim = embeddig_dim
         self.hidden_size = hidden_size
@@ -80,9 +81,10 @@ class ClassicLanguageModel(nn.Module):
 
 class AttentionLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size, embeddig_dim, hidden_size,  n_heads=8, weight_tying=True):
+    def __init__(self, vocab_size, embeddig_dim, hidden_size,  n_heads=8, weight_tying=True, model_name=None):
         super(AttentionLanguageModel, self).__init__()
         self.vocab_size = vocab_size
+        self.model_name = model_name
         self.embeddig_dim = embeddig_dim
         self.hidden_size = hidden_size
         self.n_heads = n_heads
