@@ -14,6 +14,7 @@ dataloaders:
     train_batch_size: 30
     test_batch_size: 20
     pad_len: 300
+    tokenizer_type: word
 
 model:
     vocab_size: 20226

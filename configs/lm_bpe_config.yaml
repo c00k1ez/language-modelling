@@ -4,7 +4,7 @@ general:
     checkpoint_path: ./bpe_lm_checkpoints/
 
 trainer_params:
-    max_epochs: 40
+    max_epochs: 10
     val_check_interval: 0.25
     default_save_path: ./logs/
     gpus: 1

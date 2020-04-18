@@ -8,6 +8,7 @@ from framework.models import ClassicLanguageModel, AttentionLanguageModel
 from framework.lm_framework import LMFramework
 
 from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.logging import CometLogger
 
 import os
 import confuse
@@ -23,6 +24,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--config_file', type=str, default='./configs/lm_base_config.yaml')
     parser.add_argument('--model', type=str, default='classic_lm')
+    parser.add_argument('--experiment_name', type=str, default='experiment_1')
     args = parser.parse_args()
 
     config = confuse.Configuration('research')
@@ -47,6 +49,23 @@ if __name__ == "__main__":
     if not os.path.isdir(config['trainer_params']['default_save_path'].get()):
         os.makedirs(config['trainer_params']['default_save_path'].get())
 
+    exp_name =  args.experiment_name + \
+                '_' + \
+                args.model + \
+                '_' + \
+                config['dataloaders']['tokenizer_type'].get() + \
+                '_epochs_' + \
+                config['trainer_params']['max_epochs'].get()
+
+    logger = CometLogger(
+        api_key="JmJge0xlJa1je2L4cAF0bju6v",
+        workspace="c00k1ez",
+        project_name="low-resource-lm-research",
+        experiment_name=exp_name
+    )
+
+    logger.experiment.log_parameters(config.get())
+
     checkpoint_callback = ModelCheckpoint(
         filepath=config['general']['checkpoint_path'].get(),
         save_top_k=1,
@@ -59,6 +78,9 @@ if __name__ == "__main__":
     trainer = pl.Trainer(**config['trainer_params'].get(),
                         checkpoint_callback=checkpoint_callback,
                         print_nan_grads=True,
-                        profiler=True
+                        profiler=True,
+                        logger=logger
                         )
     trainer.fit(framework)
+
+    
