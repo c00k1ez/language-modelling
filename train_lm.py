@@ -74,7 +74,7 @@ if __name__ == "__main__":
         verbose=True,
         monitor='val_loss',
         mode='min',
-        prefix=args.model
+        prefix=args.model + '_'
     )
 
     trainer = pl.Trainer(**config['trainer_params'].get(),
