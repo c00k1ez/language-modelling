@@ -72,6 +72,7 @@ if __name__ == "__main__":
         config_data.update(dict(cfg_raw[key]))
     logger.experiment.log_parameters(config_data)
 
+    #TODO: add checkpoint loading to comet.ml 
     checkpoint_callback = ModelCheckpoint(
         filepath=config['general']['checkpoint_path'].get(),
         save_top_k=1,
