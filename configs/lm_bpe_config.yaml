@@ -20,7 +20,7 @@ dataloaders:
 
 model:
     vocab_size: 15000
-    embeddig_dim: 300 
+    embeddig_dim: 128 
     hidden_size: 128
 
 optimizer:

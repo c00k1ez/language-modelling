@@ -24,14 +24,25 @@ class SpatialDropout(torch.nn.Dropout2d):
 
 class ClassicLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size, embeddig_dim, hidden_size):
+    def __init__(self, vocab_size, embeddig_dim, hidden_size, weight_tying=True):
         super(ClassicLanguageModel, self).__init__()
+        self.vocab_size = vocab_size
+        self.embeddig_dim = embeddig_dim
+        self.hidden_size = hidden_size
+        self.weight_tying = weight_tying
+        
         self.embedding = nn.Embedding(vocab_size, embeddig_dim)
         self.lstm = nn.LSTM(embeddig_dim, hidden_size, batch_first=True)
         self.do = SpatialDropout()
         self.gru = nn.GRU(hidden_size, hidden_size, batch_first=True)
         self.norm = nn.LayerNorm(hidden_size)
         self.head = nn.Linear(hidden_size, vocab_size)
+
+        if weight_tying:
+            if hidden_size != embeddig_dim:
+                raise Exception("hidden_size and embeddig_dim mismatch")
+            else:
+                self.head.weight = self.embedding.weight
 
     def forward(self, batch):
         x = batch['text']
@@ -69,9 +80,14 @@ class ClassicLanguageModel(nn.Module):
 
 class AttentionLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size, embeddig_dim, hidden_size,  n_heads=8):
+    def __init__(self, vocab_size, embeddig_dim, hidden_size,  n_heads=8, weight_tying=True):
         super(AttentionLanguageModel, self).__init__()
+        self.vocab_size = vocab_size
+        self.embeddig_dim = embeddig_dim
         self.hidden_size = hidden_size
+        self.n_heads = n_heads
+        self.weight_tying = weight_tying
+        
         self.embedding = nn.Embedding(vocab_size, embeddig_dim)
         self.lstm = nn.LSTM(embeddig_dim, hidden_size, batch_first=True)
         self.do = SpatialDropout()
@@ -80,6 +96,12 @@ class AttentionLanguageModel(nn.Module):
         self.head = nn.Linear(hidden_size, vocab_size)
 
         self.attention = nn.MultiheadAttention(hidden_size, n_heads)
+
+        if weight_tying:
+            if hidden_size != embeddig_dim:
+                raise Exception("hidden_size and embeddig_dim mismatch")
+            else:
+                self.head.weight = self.embedding.weight
 
     def generate_square_subsequent_mask(self, seq_len):
         mask = (torch.triu(torch.ones(seq_len, seq_len)) == 1).transpose(0, 1)

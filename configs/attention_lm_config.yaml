@@ -17,7 +17,7 @@ dataloaders:
 
 model:
     vocab_size: 20226
-    embeddig_dim: 300 
+    embeddig_dim: 128
     hidden_size: 128
     n_heads: 5
 
