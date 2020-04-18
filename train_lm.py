@@ -56,6 +56,8 @@ if __name__ == "__main__":
                 config['dataloaders']['tokenizer_type'].get() + \
                 '_epochs_' + \
                 config['trainer_params']['max_epochs'].get()
+    
+    print("starting " + exp_name + " experiment")
 
     logger = CometLogger(
         api_key="JmJge0xlJa1je2L4cAF0bju6v",
