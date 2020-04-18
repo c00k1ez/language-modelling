@@ -90,4 +90,10 @@ if __name__ == "__main__":
                         )
     trainer.fit(framework)
 
+    logger.experiment.log_model(args.model + '_' + config['dataloaders']['tokenizer_type'].get(),
+                                config['general']['checkpoint_path'].get() +'/'+ os.listdir(
+                                    config['general']['checkpoint_path'].get()
+                                    )[0]
+                                )
+
     
