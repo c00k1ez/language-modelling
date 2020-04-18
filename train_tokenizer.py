@@ -17,12 +17,12 @@ if __name__ == "__main__":
         data = parser.raw_sentencies[key]
         all_data.extend(data)
     
-    #tokenizer.build_vocab(all_data, 'data/vocab.txt')
+    tokenizer.build_vocab(all_data, 'data/vocab_lower.txt')
 
     vocab_size = 15000
     print('-------------------')
     print('train bpe with {} vocab size'.format(vocab_size))
-    model_name = './data/bpe_{}_vocab.model'.format(vocab_size)
+    model_name = './data/bpe_{}_vocab_lower.model'.format(vocab_size)
     tokenizer = BPETokenizer.train_model(all_data, vocab_size, model_name)
 
     print('test tokenizer')

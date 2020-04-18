@@ -3,7 +3,7 @@ from nltk.tokenize import MWETokenizer
 from collections import Counter
 import tqdm
 
-from typing import List
+from typing import List, Union
 
 class WordTokenizer:
     
@@ -12,8 +12,10 @@ class WordTokenizer:
                 bos_token='<BOS>', 
                 eos_token='<EOS>',
                 unk_token='<UNK>',
-                pad_token='<PAD>'):
-    
+                pad_token='<PAD>',
+                lower_case=True):
+
+        self.lower_case = lower_case
         self.vocab = None
         self.rev_vocab = None
         self.vocab_file = vocab_file
@@ -47,15 +49,21 @@ class WordTokenizer:
                     self.vocab.append(d[1])
             print('Read vocab file with {} tokens'.format(len(self.vocab)))
   
-    def build_vocab(self, raw_text: List[str], vocab_path='vocab.txt', threshold=0.7) -> None:
+    def build_vocab(self, 
+                    raw_text: List[str], 
+                    vocab_path='vocab.txt', 
+                    threshold=0.7, 
+                    return_freq=False) -> Union[None, List[tuple]]:
         vocab_ = []
         for sent in tqdm.tqdm(raw_text):
+            if self.lower_case:
+                sent = sent.lower()
             tokenized = nltk.word_tokenize(sent)
             tokenized = self.mwe_tokenizer.tokenize(tokenized)
             vocab_.extend(tokenized)
         cnt = Counter(vocab_)
-        most_common_words = cnt.most_common(int(len(cnt) * threshold))
-        most_common_words = [w[0] for w in most_common_words]
+        most_common_words_ = cnt.most_common(int(len(cnt) * threshold))
+        most_common_words = [w[0] for w in most_common_words_]
         most_common_words.remove('unk')
         most_common_words.remove('<')
         most_common_words.remove('>')
@@ -75,6 +83,11 @@ class WordTokenizer:
         print('Build vocab with {} tokens'.format(len(self.vocab)))
         self._rev_vocab()
 
+        if return_freq:
+            return most_common_words_
+        else:
+            return None
+
     def _rev_vocab(self) -> None:
         if self.vocab is None:
             print('Cannot build reverse vocab without vocab')
@@ -85,6 +98,8 @@ class WordTokenizer:
         if self.vocab is None:
             raise Exception('You cannot tokenize without vocab')
         else:
+            if self.lower_case:
+                raw_text = raw_text.lower()
             tokens = nltk.word_tokenize(raw_text)
             tokens = self.mwe_tokenizer.tokenize(tokens)
             for i in range(len(tokens)):

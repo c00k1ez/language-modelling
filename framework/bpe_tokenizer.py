@@ -11,7 +11,10 @@ class BPETokenizer:
                 eos_token='<EOS>',
                 unk_token='<UNK>',
                 pad_token='<PAD>',
-                dropout_prob=0.0):
+                dropout_prob=0.0,
+                lower_case=True):
+
+        self.lower_case = lower_case
         self.model_file = model_file
         self.model_file = model_file
         self.bpe = self._read_model()
@@ -29,14 +32,19 @@ class BPETokenizer:
         return yttm.BPE(model=self.model_file)
     
     @staticmethod
-    def train_model(raw_text: List[str], vocab_size: int, model_file: str) -> None:
+    def train_model(raw_text: List[str], vocab_size: int, model_file: str, lower_case=True) -> None:
         train_data_path = 'temp.txt'
         with open(train_data_path, 'w', encoding='utf-8') as f:
-            f.write('\n'.join(raw_text))
+            txt = '\n'.join(raw_text)
+            if lower_case:
+                txt = txt.lower()
+            f.write(txt)
         yttm.BPE.train(data=train_data_path, vocab_size=vocab_size, model=model_file)
         os.remove(train_data_path)
 
     def tokenize(self, raw_text: str) -> List[str]:
+        if self.lower_case:
+            raw_text = raw_text.lower()
         return self.bpe.encode([raw_text], output_type=yttm.OutputType.SUBWORD, dropout_prob=self.dropout_prob)[0]
     
     def tokenize_batch(self, batch: List[str]) -> List[List[str]]:
