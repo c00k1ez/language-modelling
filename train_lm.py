@@ -55,7 +55,7 @@ if __name__ == "__main__":
                 '_' + \
                 config['dataloaders']['tokenizer_type'].get() + \
                 '_epochs_' + \
-                config['trainer_params']['max_epochs'].get()
+                str(config['trainer_params']['max_epochs'].get())
     
     print("starting " + exp_name + " experiment")
 
