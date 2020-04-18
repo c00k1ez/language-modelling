@@ -16,6 +16,7 @@ dataloaders:
     pad_len: 300
     tokenizer_type: bpe
     model_file: ./data/bpe_15000_vocab.model
+    dropout_prob: 0.1
 
 model:
     vocab_size: 15000
