@@ -4,7 +4,7 @@ general:
     checkpoint_path: ./classic_lm_checkpoints/
 
 trainer_params:
-    max_epochs: 40
+    max_epochs: 10
     val_check_interval: 0.25
     default_save_path: ./logs/
     gpus: 1
@@ -18,8 +18,8 @@ dataloaders:
 
 model:
     vocab_size: 20226
-    embeddig_dim: 128 
-    hidden_size: 128
+    embeddig_dim: 256 
+    hidden_size: 256
 
 optimizer:
     learning_rate: 0.001
