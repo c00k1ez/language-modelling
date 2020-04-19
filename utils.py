@@ -7,8 +7,14 @@ from framework.wikitext_parser import WikiTextParser
 from framework.word_tokenizer import WordTokenizer
 from framework.bpe_tokenizer import BPETokenizer
 
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.logging import CometLogger
+from pytorch_lightning import LightningModule, Trainer
+
 import numpy as np
 import random
+
+import os
 
 
 def load_dataloaders(train_batch_size, 
@@ -61,3 +67,16 @@ def seed_all(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     random.seed(seed)
+
+
+def CustomModelCheckpoint(ModelCheckpoint):
+
+    def __init__(self, model_name, **kwargs):
+        super(CustomModelCheckpoint, self).__init__(**kwargs)
+        self.model_name = model_name
+
+    def on_validation_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        super(CustomModelCheckpoint, self).on_validation_end(trainer, pl_module)
+        if isinstance(trainer.logger, CometLogger):
+            path = self.dirpath + '/' + os.listdir(self.dirpath)[0]
+            trainer.logger.experiment.log_model(self.model_name, path)

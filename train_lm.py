@@ -3,7 +3,7 @@ import torch.nn as nn
 
 import pytorch_lightning as pl 
 
-from utils import load_dataloaders, seed_all
+from utils import load_dataloaders, seed_all, CustomModelCheckpoint
 from framework.models import ClassicLanguageModel, AttentionLanguageModel
 from framework.lm_framework import LMFramework
 
@@ -72,8 +72,10 @@ if __name__ == "__main__":
         config_data.update(dict(cfg_raw[key]))
     logger.experiment.log_parameters(config_data)
 
-    #TODO: add checkpoint loading to comet.ml 
-    checkpoint_callback = ModelCheckpoint(
+    model_name = args.model + '_' + config['dataloaders']['tokenizer_type'].get()
+    
+    checkpoint_callback = CustomModelCheckpoint(
+        model_name=model_name, 
         filepath=config['general']['checkpoint_path'].get(),
         save_top_k=1,
         verbose=True,
@@ -89,11 +91,6 @@ if __name__ == "__main__":
                         logger=logger
                         )
     trainer.fit(framework)
-
-    logger.experiment.log_model(args.model + '_' + config['dataloaders']['tokenizer_type'].get(),
-                                config['general']['checkpoint_path'].get() +'/'+ os.listdir(
-                                    config['general']['checkpoint_path'].get()
-                                    )[0]
-                                )
+    
 
     
