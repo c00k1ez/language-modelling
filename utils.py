@@ -79,4 +79,4 @@ class CustomModelCheckpoint(ModelCheckpoint):
         super().on_validation_end(trainer, pl_module)
         if isinstance(trainer.logger, CometLogger):
             path = self.dirpath + '/' + os.listdir(self.dirpath)[0]
-            trainer.logger.experiment.log_model(self.model_name, path)
+            trainer.logger.experiment.log_model(self.model_name, path, overwrite=True)
