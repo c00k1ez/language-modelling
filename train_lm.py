@@ -75,7 +75,7 @@ if __name__ == "__main__":
     model_name = args.model + '_' + config['dataloaders']['tokenizer_type'].get()
     
     checkpoint_callback = CustomModelCheckpoint(
-        model_name=model_name, 
+        model_name, 
         filepath=config['general']['checkpoint_path'].get(),
         save_top_k=1,
         verbose=True,
@@ -91,6 +91,6 @@ if __name__ == "__main__":
                         logger=logger
                         )
     trainer.fit(framework)
-    
+
 
     
