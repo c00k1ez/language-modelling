@@ -69,7 +69,7 @@ def seed_all(seed):
     random.seed(seed)
 
 
-def CustomModelCheckpoint(ModelCheckpoint):
+class CustomModelCheckpoint(ModelCheckpoint):
 
     def __init__(self, model_name, **kwargs):
         super().__init__(**kwargs)
