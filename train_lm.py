@@ -27,9 +27,11 @@ if __name__ == "__main__":
     parser.add_argument('--experiment_name', type=str, default='experiment_1')
     args = parser.parse_args()
 
+    # load config file
     config = confuse.Configuration('research')
     config.set_file(args.config_file)
 
+    # set model
     model = None
     if args.model == 'classic_lm':
         model = ClassicLanguageModel(**config['model'].get(), model_name=args.model)
@@ -37,9 +39,11 @@ if __name__ == "__main__":
         model = AttentionLanguageModel(**config['model'].get(), model_name=args.model)
     else:
         raise ValueError("You have wrong --model parameter")
-
+    
+    # seed everything
     seed_all(config['general']['seed'].get())
 
+    # get dataloaders and training framework
     loaders = load_dataloaders(**config['dataloaders'].get())
     framework = LMFramework(model, **config['optimizer'].get(), loaders=loaders)
 
@@ -59,13 +63,15 @@ if __name__ == "__main__":
     
     print("starting " + exp_name + " experiment")
 
+    # setup logger
     logger = CometLogger(
-        api_key="JmJge0xlJa1je2L4cAF0bju6v",
+        api_key=os.environ['API_KEY'],
         workspace="c00k1ez",
         project_name="low-resource-lm-research",
         experiment_name=exp_name
     )
 
+    # get all config data to send in to comet.ml
     config_data = {}
     cfg_raw = config.get()
     for key in cfg_raw.keys():
@@ -74,6 +80,7 @@ if __name__ == "__main__":
 
     model_name = args.model + '_' + config['dataloaders']['tokenizer_type'].get()
     
+    # setup my custom checkpoint callback
     checkpoint_callback = CustomModelCheckpoint(
         model_name=model_name, 
         filepath=config['general']['checkpoint_path'].get(),

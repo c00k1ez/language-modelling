@@ -2,3 +2,4 @@
 .vscode/
 __pycache__/
 data/wikitext-2/
+add_api_key.sh

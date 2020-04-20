@@ -16,14 +16,16 @@ import random
 
 import os
 
+from typing import Union, Dict
 
-def load_dataloaders(train_batch_size, 
-                    test_batch_size, 
-                    pad_len, 
-                    vocab_file='./data/vocab.txt', 
-                    tokenizer_type='word',
-                    model_file=None,
-                    dropout_prob=0.0):
+
+def load_dataloaders(train_batch_size: int, 
+                    test_batch_size: int, 
+                    pad_len: int, 
+                    vocab_file: str = './data/vocab.txt', 
+                    tokenizer_type: str = 'word',
+                    model_file: Union[str, None] = None,
+                    dropout_prob: float = 0.0) -> Dict[str, DataLoader]:
     
     if tokenizer_type not in ['word', 'bpe']:
         raise ValueError("You have to use only 'word' or 'bpe' tokenizer type")
@@ -48,7 +50,7 @@ def load_dataloaders(train_batch_size,
 
     return loaders
 
-def generate_sentence(md, tok, start_str):
+def generate_sentence(md, tok, start_str) -> None:
     md.eval()
     with torch.no_grad():
         tokenized = tok.tokenize(start_str)
@@ -61,7 +63,7 @@ def generate_sentence(md, tok, start_str):
             gen = gen[0][-1].argmax().item()
     print(' '.join(tok.decode(tokenized_)))
 
-def seed_all(seed):
+def seed_all(seed: int) -> None:
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
@@ -71,7 +73,7 @@ def seed_all(seed):
 
 class CustomModelCheckpoint(ModelCheckpoint):
 
-    def __init__(self, model_name, **kwargs):
+    def __init__(self, model_name: str, **kwargs):
         super().__init__(**kwargs)
         self.model_name = model_name
 
