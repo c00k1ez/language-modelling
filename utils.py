@@ -69,6 +69,8 @@ def seed_all(seed: int) -> None:
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     random.seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 
 class CustomModelCheckpoint(ModelCheckpoint):
