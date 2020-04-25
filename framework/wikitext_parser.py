@@ -33,6 +33,14 @@ class WikiTextParser:
             raw_sentencies[name] = self._read_file_(full_path)
             raw_sentencies[name] = self.sent_detector.tokenize(raw_sentencies[name].strip())
             print('preprocess of {} file was ended'.format(name))
+        
+        total = 0
+        print('---------------------------------')
+        for key in raw_sentencies.keys():
+            total += len(raw_sentencies[key])
+            print('{} set: {} sentencies'.format(key, len(raw_sentencies[key])))
+        print('total: {} sentencies'.format(total))
+        print('---------------------------------')
         return raw_sentencies
 
     def _read_file_(self, full_path: str) -> str:
