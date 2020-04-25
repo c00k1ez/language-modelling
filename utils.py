@@ -39,21 +39,12 @@ def load_dataloaders(train_batch_size: int,
 
     parser = WikiTextParser('./data/wikitext-2')
 
-    data = {
-        'train': [],
-        'test': [],
-        'valid': []
-    }
-    for key in data.keys():
-        for sample in parser.raw_sentencies[key]:
-            data[key].extend(tokenizer.tokenize(sample))
-
     loaders = {
-        'train': DataLoader(WikiTextDataset(data['train'], pad_len, tokenizer), 
+        'train': DataLoader(WikiTextDataset(parser.raw_sentencies['train'], pad_len, tokenizer), 
                                             train_batch_size, shuffle=True),
-        'test': DataLoader(WikiTextDataset(data['test'], pad_len, tokenizer), 
+        'test': DataLoader(WikiTextDataset(parser.raw_sentencies['test'], pad_len, tokenizer), 
                                             test_batch_size, shuffle=True),
-        'valid': DataLoader(WikiTextDataset(data['test'], pad_len, tokenizer), 
+        'valid': DataLoader(WikiTextDataset(parser.raw_sentencies['test'], pad_len, tokenizer), 
                                             test_batch_size, shuffle=True)
     }
 
