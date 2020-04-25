@@ -33,7 +33,7 @@ class ClassicLanguageModel(nn.Module):
         self.weight_tying = weight_tying
         
         self.embedding = nn.Embedding(vocab_size, embeddig_dim)
-        self.lstm = nn.LSTM(embeddig_dim, hidden_size, batch_first=True)
+        self.lstm = nn.GRU(embeddig_dim, hidden_size, batch_first=True)
         self.do = SpatialDropout()
         self.gru = nn.GRU(hidden_size, hidden_size, batch_first=True)
         self.norm = nn.LayerNorm(hidden_size)
@@ -91,7 +91,7 @@ class AttentionLanguageModel(nn.Module):
         self.weight_tying = weight_tying
         
         self.embedding = nn.Embedding(vocab_size, embeddig_dim)
-        self.lstm = nn.LSTM(embeddig_dim, hidden_size, batch_first=True)
+        self.lstm = nn.GRU(embeddig_dim, hidden_size, batch_first=True)
         self.do = SpatialDropout()
         self.gru = nn.GRU(hidden_size, hidden_size, batch_first=True)
         self.norm = nn.LayerNorm(hidden_size)
