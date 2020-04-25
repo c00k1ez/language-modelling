@@ -13,7 +13,7 @@ trainer_params:
 dataloaders:
     train_batch_size: 30
     test_batch_size: 20
-    pad_len: 300
+    pad_len: 250
     tokenizer_type: bpe
     model_file: ./data/bpe_15000_vocab.model
     dropout_prob: 0.1

@@ -1,3 +1,5 @@
+import math
+
 import torch
 import torch.utils.data as data
 
@@ -21,14 +23,12 @@ class WikiTextDataset(data.Dataset):
         self.pad_token = pad_token
 
     def __len__(self):
-        return len(self.text)
+        return math.ceil(len(self.text) / self.pad_len)
 
     def __getitem__(self, ind):
-        raw_txt = self.text[ind]
-        raw_txt = self.tokenizer.tokenize(raw_txt)
-        if len(raw_txt) >= self.pad_len - 2:
-            raw_txt = raw_txt[:self.pad_len - 2]
-        txt = [self.bos_token, ] + raw_txt + [self.eos_token,] + [self.pad_token] * (self.pad_len - len(raw_txt) - 2)
+        raw_txt = self.text[ind * (self.pad_len - 2) : (ind + 1) * (self.pad_len - 2)]
+        # raw_txt = self.tokenizer.tokenize(raw_txt)
+        txt = [self.bos_token,] + raw_txt + [self.eos_token,] + [self.pad_token] * (self.pad_len - len(raw_txt) - 2)
         loss_mask = ([1] * (len(raw_txt) + 2)) + ([0] * (self.pad_len - len(raw_txt) - 2))
         label = raw_txt + [self.eos_token] + [self.pad_token] * (self.pad_len - len(raw_txt) - 1)
 

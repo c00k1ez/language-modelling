@@ -11,7 +11,7 @@ class WikiTextParser:
                 train_file='wiki.train.tokens', 
                 test_file='wiki.test.tokens',
                 val_file='wiki.valid.tokens',
-                lower_case=False):
+                lower_case=True):
         
         self.lower_case = lower_case
         self.train_file = train_file 
