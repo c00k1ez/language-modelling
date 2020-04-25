@@ -30,8 +30,10 @@ class WikiTextParser:
 
         for path, name in list(zip(files, list(raw_sentencies.keys()))):
             full_path = Path(self.dir_path + '/' + path)
-            raw_sentencies[name] = self._read_file_(full_path)
-            raw_sentencies[name] = self.sent_detector.tokenize(raw_sentencies[name].strip())
+            cleaned_data = self._read_file_(full_path)
+            cleaned_data = self.sent_detector.tokenize(cleaned_data)
+            cleaned_data = [sample for sample in cleaned_data if len(sample) > 5]
+            raw_sentencies[name] = cleaned_data
             print('preprocess of {} file was ended'.format(name))
         
         total = 0
