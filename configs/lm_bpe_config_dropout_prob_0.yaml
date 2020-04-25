@@ -4,7 +4,7 @@ general:
     checkpoint_path: ./bpe_lm_checkpoints/
 
 trainer_params:
-    max_epochs: 10
+    max_epochs: 30
     val_check_interval: 0.25
     default_save_path: ./logs/
     gpus: 1
@@ -13,7 +13,7 @@ trainer_params:
 dataloaders:
     train_batch_size: 30
     test_batch_size: 20
-    pad_len: 250
+    pad_len: 150
     tokenizer_type: bpe
     model_file: ./data/bpe_15000_vocab.model
     dropout_prob: 0.0
