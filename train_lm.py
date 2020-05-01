@@ -65,7 +65,7 @@ if __name__ == "__main__":
     print("starting " + exp_name + " experiment")
 
     # setup logger
-    api_key = parser.api_key
+    api_key = args.api_key
     if api_key == '':
         api_key = os.environ['API_KEY']
     logger = CometLogger(
