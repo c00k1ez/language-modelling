@@ -25,6 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('--config_file', type=str, default='./configs/lm_base_config.yaml')
     parser.add_argument('--model', type=str, default='classic_lm')
     parser.add_argument('--experiment_name', type=str, default='experiment_1')
+    parser.add_argument('--api_key',type=str, default='')
     args = parser.parse_args()
 
     # load config file
@@ -64,6 +65,9 @@ if __name__ == "__main__":
     print("starting " + exp_name + " experiment")
 
     # setup logger
+    api_key = parser.api_key
+    if api_key == '':
+        api_key = os.environ['API_KEY']
     logger = CometLogger(
         api_key=os.environ['API_KEY'],
         workspace="c00k1ez",
